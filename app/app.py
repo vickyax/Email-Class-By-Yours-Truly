@@ -176,7 +176,7 @@ def predict_email(text, artifacts,prd=0):
             pred_idx = torch.argmax(probs, dim=1).item()
             confidence = probs[0][pred_idx].item()
         
-        # Mapping from id2label (Make sure this matches your training!)
+        # Mapping from id2label
         # Adjust these labels based on your specific training label2id
             id2label = {0: "Complaint", 1: "Feedback", 2: "Request", 3: "Spam"} 
         # Fallback if your model has different IDs, try to grab from config if possible, 
@@ -207,11 +207,8 @@ def predict_email(text, artifacts,prd=0):
             pred_idx = torch.argmax(probs, dim=1).item()
             confidence = probs[0][pred_idx].item()
         
-        # Mapping from id2label (Make sure this matches your training!)
-        # Adjust these labels based on your specific training label2id
+        # Mapping from id2label   
             id2label = {0: "Complaint", 1: "Feedback", 2: "Request", 3: "Spam"} 
-        # Fallback if your model has different IDs, try to grab from config if possible, 
-        # otherwise rely on the hardcoded map above.
             if hasattr(artifacts['bert_model'].config, 'id2label') and artifacts['bert_model'].config.id2label:
                 category = artifacts['bert_model'].config.id2label[pred_idx]
             else:
@@ -255,7 +252,7 @@ page = st.sidebar.radio("Navigate", ["Urgency Level","Email Classification","Cla
 st.sidebar.markdown("---")
 confidence_threshold = 0.80
 
-# --- PAGE 1:  ---
+# --- PAGES ---
 if page == "Urgency Level":
     st.title("Customer Support")
     st.markdown("Paste incoming email content below to automatically  prioritize.")
