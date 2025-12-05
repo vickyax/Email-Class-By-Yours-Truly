@@ -1,36 +1,80 @@
+#  AI-Powered Smart Email Classifier
 
-Enterprise Smart Email Classifier
+![Python](https://img.shields.io/badge/Python-3.10%2B-blue)
+![Streamlit](https://img.shields.io/badge/Streamlit-1.28-FF4B4B)
+![PyTorch](https://img.shields.io/badge/PyTorch-2.0-orange)
+![Scikit-Learn](https://img.shields.io/badge/Sklearn-1.2.2-yellow)
+![Status](https://img.shields.io/badge/Status-Deployed-success)
 
-An AI-powered customer support tool that automatically categorizes incoming emails and detects their urgency level. Designed to help support teams prioritize critical issues, filter spam, and route requests efficiently.
-Live Demo
+An intelligent customer support triage tool that automatically categorizes incoming emails and assigns urgency levels. Designed to help support teams reduce manual sorting time, prioritize critical issues, and improve response efficiency.
 
-Click here to view the deployed app (https://email-class-by-yours-truly.streamlit.app/)
-    Key Features
+---
 
-    Dual-Model Architecture:
+##  Live Demo
+**[Click here to view the deployed app](https://email-class-by-yours-truly.streamlit.app/)**
+*(Note: Replace this link with your actual Streamlit Cloud URL after deployment)*
 
-        Categorization: Uses a Quantized DistilBERT (Transformer) model to classify emails into Complaint, Feedback, Request, or Spam.
+---
 
-        Urgency Detection: Uses a Support Vector Machine (SVM) pipeline with TF-IDF to flag emails as High, Medium, or Low priority.
+##  Key Features
 
-    Auto-Stitching : automatically reassembling split model files during runtime 60mb + 70mb.
+### 1. Automated Categorization
+Classifies emails into four distinct business intent categories using a **Quantized DistilBERT** transformer model:
+* 📝 **Complaint:** Issues, failures, or dissatisfaction.
+* 💡 **Feedback:** Praise or suggestions.
+* ❓ **Request:** Inquiries about pricing, demos, or information.
+* 🗑️ **Spam:** Irrelevant or promotional content.
 
-    Real-Time Dashboard: Interactive analytics powered by Plotly to visualize ticket volume, urgency distribution, and response metrics.
+### 2. Urgency Detection
+Determines the priority level of an email using a **Support Vector Machine (SVM)** pipeline with TF-IDF vectorization:
+* 🔴 **High:** Critical issues requiring immediate attention (e.g., system failure).
+* 🟠 **Medium:** Standard requests (e.g., pricing inquiries).
+* 🟢 **Low:** General feedback or spam.
 
-    Smart Preprocessing: Includes custom NLP cleaning pipelines (Lemmatization, Stop-word removal, Regex cleaning).
+### 3. Operational Dashboard
+A real-time analytics dashboard powered by **Plotly** to visualize:
+* Ticket volume trends.
+* Distribution of urgency levels.
+* Category breakdowns.
 
-    Installation & Local Setup
+### 4. Smart Preprocessing
+Includes a custom NLP cleaning pipeline that handles:
+* Lemmatization & Stop-word removal.
+* Regex cleaning (removing timestamps, email headers).
+* Bias removal (stripping specific "priority terms" during training to prevent overfitting).
+
+---
+
+##  Technical Architecture
+
+### Model Compression & Handling
+To adhere to GitHub's 100MB file limit and optimize for Cloud deployment, this project uses a custom architecture:
+1.  **Dynamic Quantization:** The DistilBERT model was quantized from FP32 to INT8, reducing size from ~260MB to ~65MB.
+2.  **File Splitting:** The model file is physically split into `.part0` and `.part1` to bypass Git constraints.
+3.  **Auto-Stitcher:** On application startup, a custom script in `app.py` automatically detects the parts and reassembles them into a functional model in memory.
+
+### Tech Stack
+* **Frontend:** Streamlit
+* **NLP/ML:** Hugging Face Transformers, PyTorch, Scikit-learn, NLTK
+* **Visualization:** Plotly Express
+* **Data Handling:** Pandas, Joblib
+
+---
+
+##  Installation & Local Setup
 
 Follow these steps to run the application on your local machine.
-1. Clone the Repository
-Bash
 
-git clone https://github.com/vickyax/Email-Class-By-Yours-Truly.git
+ 1. Clone the Repository
+```
+git clone [https://github.com/vickyax/Email-Class-By-Yours-Truly.git](https://github.com/vickyax/Email-Class-By-Yours-Truly.git)
 cd Email-Class-By-Yours-Truly
+```
+2. Create a Virtual Environment
 
-2. Create a Virtual Environment (Recommended)
+It is highly recommended to use a virtual environment to manage dependencies.
 Bash
-
+```
 # Windows
 python -m venv env
 .\env\Scripts\activate
@@ -38,96 +82,44 @@ python -m venv env
 # Mac/Linux
 python3 -m venv env
 source env/bin/activate
-
+```
 3. Install Dependencies
 
-
-pip install -r requirements.txt
-
+Crucial: This project requires specific library versions to ensure compatibility between transformers and huggingface-hub.
+Bash
+```
+pip install -r project_folder/requirements.txt
+```
 4. Run the Application
 
-streamlit run app/app.py
-
-
-
-   Project Structure
-Plaintext
-
+Navigate to the root directory and run:
+Bash
+```
+streamlit run project_folder/app.py
+```
+The first run make take a few seconds as the Auto-Stitcher reassembles the model.
+Project Structure
+```
 Email-Class-By-Yours-Truly/
 │
-├── app/               # Main Application Code
-│   ├── app.py                    # Streamlit Frontend & Logic
+├── project_folder/               # Main Application Source Code
+│   ├── app.py                    # Streamlit Frontend & Application Logic
+│   ├── requirements.txt          # Python Dependencies
 │   │
 │   ├── quantized_model/          # DistilBERT Model (Category)
 │   │   ├── config.json
-│   │   ├── quantized_bert.pth.part0  # Split file part 1
-│   │   ├── quantized_bert.pth.part1  # Split file part 2
-│   │   └── tokenizer.json
+│   │   ├── quantized_bert.pth.part0  # Split Model Part 1
+│   │   ├── quantized_bert.pth.part1  # Split Model Part 2
+│   │   ├── tokenizer.json
+│   │   └── vocab.txt
 │   │
 │   └── trained_priority_models/  # SVM/RF Model (Urgency)
 │       ├── poly_svc_model.joblib
 │       └── tfidf_vectorizer.joblib
 │
-├── requirements.txt              # Dependencies
-└── README.md                     # Documentation
+├── .gitignore                    # Git Ignore file (excludes env/)
+└── README.md                     # Project Documentation
 
-    Working
-1. The "Auto-Stitcher"
+```
 
-The DistilBERT model is roughly 130MB, which exceeds GitHub's file size limit. We split the model into .part0 and .part1.
-
-    On Deployment: When app.py loads, it checks if the full model exists.
-
-    If Missing: It reads the parts and binary-merges them back into a single quantized_bert.pth file in the system's temporary memory.
-
-2. Quantization
-
-To ensure the app runs fast on CPU-only environments (like the free tier of Streamlit Cloud), the BERT model was Dynamic Quantized.
-
-    Original Size: ~260 MB (FP32)
-
-    Quantized Size: ~65 MB (INT8)
-
-    Accuracy Loss: < 1%
-
-3. Preprocessing Pipeline
-
-Before any prediction, text undergoes:
-
-    Lowercasing & Regex cleaning (removing specific priority keywords to prevent bias).
-
-    Tokenization.
-
-    Stop-word removal (NLTK).
-
-    Lemmatization (converting words to their base root).
-
-   Dependencies
-
-The project relies on a specific "Sweet Spot" of library versions to prevent conflicts between transformers and huggingface-hub:
-
-    streamlit==1.28.0
-
-    transformers==4.35.2
-
-    huggingface-hub==0.19.4
-
-    torch==2.0.1
-
-    scikit-learn==1.2.2 (Required for loading the urgency model)
-
-
-
-🤝 Contributing
-
-    Fork the repository.
-
-    Create your feature branch (git checkout -b feature/AmazingFeature).
-
-    Commit your changes (git commit -m 'Add some AmazingFeature').
-
-    Push to the branch (git push origin feature/AmazingFeature).
-
-    Open a Pull Request.
-
-Author: [Vickyax] Built with ❤️ using Streamlit & Python
+Author: *Vickyax* Built with ❤️ using Streamlit & Python
