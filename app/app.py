@@ -80,7 +80,7 @@ def load_models():
         # 0. AUTO-STITCHER (Fix for GitHub 100MB limit)
         # ==========================================
         import os
-        model_path = "./quantized_model"
+        model_path = "./app/quantized_model"
         weights_file = f"{model_path}/quantized_bert.pth"
         
         # If the big file is missing, rebuild it from parts
@@ -125,8 +125,8 @@ def load_models():
         # ==========================================
         # 2. LOAD MODEL (Urgency)
         # ==========================================
-        svc_model = joblib.load('trained_priority_models/poly_svc_model.joblib')
-        tfidf_vectorizer = joblib.load('trained_priority_models/tfidf_vectorizer.joblib')
+        svc_model = joblib.load('app/trained_priority_models/poly_svc_model.joblib')
+        tfidf_vectorizer = joblib.load('app/trained_priority_models/tfidf_vectorizer.joblib')
         
         models['rf_model'] = svc_model 
         models['tfidf'] = tfidf_vectorizer
