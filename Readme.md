@@ -1,4 +1,4 @@
-#  AI-Powered Smart Email Classifier
+#  AI-Powered Smart Email Classifier V 0.0.0.001
 
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue)
 ![Streamlit](https://img.shields.io/badge/Streamlit-1.28-FF4B4B)
@@ -12,6 +12,8 @@ An intelligent customer support triage tool that automatically categorizes incom
 
 ##  Live Demo
 **[Click here to view the deployed app](https://email-class-by-yours-truly.streamlit.app/)**
+*(Note: Replace this link with your actual Streamlit Cloud URL after deployment)*
+
 ---
 ![deployed app](/images/screenshot.png)
 
